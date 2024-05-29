@@ -1,5 +1,7 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:collection';
 
+import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 
 import 'errors.dart';
@@ -131,8 +133,7 @@ abstract class HubInvocationMessage extends HubMessageBase {
   final String? invocationId;
 
   // Methods
-  HubInvocationMessage(
-      MessageType messageType, MessageHeaders? headers, String? invocationId)
+  HubInvocationMessage(MessageType messageType, MessageHeaders? headers, String? invocationId)
       : this.headers = headers ?? MessageHeaders(),
         this.invocationId = invocationId,
         super(messageType);
@@ -166,6 +167,18 @@ class InvocationMessage extends HubInvocationMessage {
   String toString() {
     return 'InvocationMessage - type: ${type.index}, headers: ${headers.toString()}, invocationId: $invocationId, target: $target, arguments: $arguments, streamIds: $streamIds';
   }
+
+  @override
+  bool operator ==(covariant InvocationMessage other) {
+    if (identical(this, other)) return true;
+
+    return other.target == target &&
+        listEquals(other.arguments, arguments) &&
+        listEquals(other.streamIds, streamIds);
+  }
+
+  @override
+  int get hashCode => target.hashCode ^ arguments.hashCode ^ streamIds.hashCode;
 }
 
 /// A hub message representing a streaming invocation.
@@ -197,6 +210,18 @@ class StreamInvocationMessage extends HubInvocationMessage {
   String toString() {
     return 'StreamInvocationMessage - type: ${type.index}, headers: ${headers.toString()}, invocationId: $invocationId, target: $target, arguments: $arguments, streamIds: $streamIds';
   }
+
+  @override
+  bool operator ==(covariant StreamInvocationMessage other) {
+    if (identical(this, other)) return true;
+
+    return other.target == target &&
+        listEquals(other.arguments, arguments) &&
+        listEquals(other.streamIds, streamIds);
+  }
+
+  @override
+  int get hashCode => target.hashCode ^ arguments.hashCode ^ streamIds.hashCode;
 }
 
 /// A hub message representing a single item produced as part of a result stream.
@@ -207,8 +232,7 @@ class StreamItemMessage extends HubInvocationMessage {
   final Object? item;
 
   // Methods
-  StreamItemMessage(
-      {Object? item, MessageHeaders? headers, String? invocationId})
+  StreamItemMessage({Object? item, MessageHeaders? headers, String? invocationId})
       : this.item = item,
         super(MessageType.StreamItem, headers, invocationId);
 
@@ -216,6 +240,16 @@ class StreamItemMessage extends HubInvocationMessage {
   String toString() {
     return 'StreamInvocationMessage - type: ${type.index}, headers: ${headers.toString()}, invocationId: $invocationId, item: $item';
   }
+
+  @override
+  bool operator ==(covariant StreamItemMessage other) {
+    if (identical(this, other)) return true;
+
+    return other.item == item;
+  }
+
+  @override
+  int get hashCode => item.hashCode;
 }
 
 /// A hub message representing the result of an invocation.
@@ -233,11 +267,7 @@ class CompletionMessage extends HubInvocationMessage {
   final Object? result;
 
   // Methods
-  CompletionMessage(
-      {String? error,
-      Object? result,
-      MessageHeaders? headers,
-      String? invocationId})
+  CompletionMessage({String? error, Object? result, MessageHeaders? headers, String? invocationId})
       : this.error = error,
         this.result = result,
         super(MessageType.Completion, headers, invocationId);
@@ -245,6 +275,16 @@ class CompletionMessage extends HubInvocationMessage {
   String toString() {
     return 'CompletionMessage - type: ${type.index}, headers: ${headers.toString()}, invocationId: $invocationId, error: $error, result: $result';
   }
+
+  @override
+  bool operator ==(covariant CompletionMessage other) {
+    if (identical(this, other)) return true;
+
+    return other.error == error && other.result == result;
+  }
+
+  @override
+  int get hashCode => error.hashCode ^ result.hashCode;
 }
 
 /// A hub message indicating that the sender is still active.
@@ -283,6 +323,16 @@ class CloseMessage extends HubMessageBase {
   String toString() {
     return 'CloseMessage - type: $type.index, allowReconnect: $allowReconnect, error: $error';
   }
+
+  @override
+  bool operator ==(covariant CloseMessage other) {
+    if (identical(this, other)) return true;
+
+    return other.error == error && other.allowReconnect == allowReconnect;
+  }
+
+  @override
+  int get hashCode => error.hashCode ^ allowReconnect.hashCode;
 }
 
 /// A hub message sent to request that a streaming invocation be canceled.

@@ -16,8 +16,7 @@ class WebSupportingHttpClient extends SignalRHttpClient {
 
   // Methods
 
-  WebSupportingHttpClient(Logger? logger,
-      {OnHttpClientCreateCallback? httpClientCreateCallback})
+  WebSupportingHttpClient(Logger? logger, {OnHttpClientCreateCallback? httpClientCreateCallback})
       : this._logger = logger,
         this._httpClientCreateCallback = httpClientCreateCallback;
 
@@ -40,7 +39,7 @@ class WebSupportingHttpClient extends SignalRHttpClient {
 
       final httpClient = Client();
       if (_httpClientCreateCallback != null) {
-        _httpClientCreateCallback!(httpClient);
+        _httpClientCreateCallback(httpClient);
       }
 
       final abortFuture = Future<void>(() {
@@ -61,18 +60,15 @@ class WebSupportingHttpClient extends SignalRHttpClient {
 
       headers.setHeaderValue('X-Requested-With', 'FlutterHttpClient');
       headers.setHeaderValue(
-          'content-type',
-          isJson
-              ? 'application/json;charset=UTF-8'
-              : 'text/plain;charset=UTF-8');
+          'content-type', isJson ? 'application/json;charset=UTF-8' : 'text/plain;charset=UTF-8');
 
       headers.addMessageHeaders(request.headers);
 
       _logger?.finest(
           "HTTP send: url '${request.url}', method: '${request.method}' content: '${request.content}' content length = '${(request.content as String).length}' headers: '$headers'");
 
-      final httpRespFuture = await Future.any(
-          [_sendHttpRequest(httpClient, request, uri, headers), abortFuture]);
+      final httpRespFuture =
+          await Future.any([_sendHttpRequest(httpClient, request, uri, headers), abortFuture]);
       final httpResp = httpRespFuture as Response;
 
       if (request.abortSignal != null) {
@@ -82,16 +78,15 @@ class WebSupportingHttpClient extends SignalRHttpClient {
       if ((httpResp.statusCode >= 200) && (httpResp.statusCode < 300)) {
         Object content;
         final contentTypeHeader = httpResp.headers['content-type'];
-        final isJsonContent = contentTypeHeader == null ||
-            contentTypeHeader.startsWith('application/json');
+        final isJsonContent =
+            contentTypeHeader == null || contentTypeHeader.startsWith('application/json');
         if (isJsonContent) {
           content = httpResp.body;
         } else {
           content = httpResp.body;
           // When using SSE and the uri has an 'id' query parameter the response is not evaluated, otherwise it is an error.
           if (isStringEmpty(uri.queryParameters['id'])) {
-            throw ArgumentError(
-                "Response Content-Type not supported: $contentTypeHeader");
+            throw ArgumentError("Response Content-Type not supported: $contentTypeHeader");
           }
         }
 
@@ -113,16 +108,13 @@ class WebSupportingHttpClient extends SignalRHttpClient {
 
     switch (request.method!.toLowerCase()) {
       case 'post':
-        httpResponse =
-            httpClient.post(uri, body: request.content, headers: headers.asMap);
+        httpResponse = httpClient.post(uri, body: request.content, headers: headers.asMap);
         break;
       case 'put':
-        httpResponse =
-            httpClient.put(uri, body: request.content, headers: headers.asMap);
+        httpResponse = httpClient.put(uri, body: request.content, headers: headers.asMap);
         break;
       case 'delete':
-        httpResponse = httpClient.delete(uri,
-            body: request.content, headers: headers.asMap);
+        httpResponse = httpClient.delete(uri, body: request.content, headers: headers.asMap);
         break;
       case 'get':
       default:
@@ -131,8 +123,7 @@ class WebSupportingHttpClient extends SignalRHttpClient {
 
     final hasTimeout = (request.timeout != null) && (0 < request.timeout!);
     if (hasTimeout) {
-      httpResponse =
-          httpResponse.timeout(Duration(milliseconds: request.timeout!));
+      httpResponse = httpResponse.timeout(Duration(milliseconds: request.timeout!));
     }
 
     return httpResponse;

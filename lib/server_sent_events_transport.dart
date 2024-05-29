@@ -24,11 +24,8 @@ class ServerSentEventsTransport implements ITransport {
   @override
   OnReceive? onReceive;
 
-  ServerSentEventsTransport(
-      SignalRHttpClient httpClient,
-      AccessTokenFactory? accessTokenFactory,
-      Logger? logger,
-      bool logMessageContent)
+  ServerSentEventsTransport(SignalRHttpClient httpClient, AccessTokenFactory? accessTokenFactory,
+      Logger? logger, bool logMessageContent)
       : _httpClient = httpClient,
         _accessTokenFactory = accessTokenFactory,
         _logger = logger,
@@ -44,12 +41,10 @@ class ServerSentEventsTransport implements ITransport {
     _url = url;
 
     if (_accessTokenFactory != null) {
-      final token = await _accessTokenFactory!();
+      final token = await _accessTokenFactory();
       if (!isStringEmpty(token)) {
         final encodedToken = Uri.encodeComponent(token);
-        url = url! +
-            (url.indexOf("?") < 0 ? "?" : "&") +
-            "access_token=$encodedToken";
+        url = url! + (url.indexOf("?") < 0 ? "?" : "&") + "access_token=$encodedToken";
       }
     }
 
@@ -91,8 +86,7 @@ class ServerSentEventsTransport implements ITransport {
   @override
   Future<void> send(Object data) async {
     if (_sseClient == null) {
-      return Future.error(
-          new GeneralError("Cannot send until the transport is connected"));
+      return Future.error(new GeneralError("Cannot send until the transport is connected"));
     }
     await sendMessage(
       _logger,
@@ -118,9 +112,7 @@ class ServerSentEventsTransport implements ITransport {
       if (onClose != null) {
         Exception? ex;
         if (error != null) {
-          ex = (error is Exception)
-              ? error
-              : new GeneralError(error?.toString());
+          ex = (error is Exception) ? error : new GeneralError(error?.toString());
         }
         onClose!(error: ex);
       }

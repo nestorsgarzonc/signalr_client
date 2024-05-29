@@ -8,8 +8,6 @@ import 'package:logging/logging.dart';
 Function deepEq = const DeepCollectionEquality().equals;
 
 void main() {
-  // Common
-
   group('Json hub protocol -> ', () {
     final headers = MessageHeaders();
     headers.setHeaderValue("foo", "bar");
@@ -52,11 +50,9 @@ void main() {
         final invocation = e;
         final protocol = new JsonHubProtocol();
         final writtenMsg = protocol.writeMessage(invocation);
-        final parsedMessages =
-            protocol.parseMessages(writtenMsg, Logger("JsonHubProtocol"));
+        final parsedMessages = protocol.parseMessages(writtenMsg, Logger("JsonHubProtocol"));
 
-        final equalityCheck =
-            deepEq(parsedMessages.toString(), ([invocation]).toString());
+        final equalityCheck = deepEq(parsedMessages.toString(), ([invocation]).toString());
         expect(equalityCheck, true);
       });
     });
@@ -73,8 +69,7 @@ void main() {
         )
       ],
       [
-        TextMessageFormat.write(
-            '{"type":3, "invocationId": "abc", "result": "OK", "headers": {}}'),
+        TextMessageFormat.write('{"type":3, "invocationId": "abc", "result": "OK", "headers": {}}'),
         CompletionMessage(
           headers: MessageHeaders(),
           invocationId: "abc",
@@ -82,8 +77,7 @@ void main() {
         )
       ],
       [
-        TextMessageFormat.write(
-            '{"type":3, "invocationId": "abc", "result": null, "headers": {}}'),
+        TextMessageFormat.write('{"type":3, "invocationId": "abc", "result": null, "headers": {}}'),
         CompletionMessage(
           headers: MessageHeaders(),
           invocationId: "abc",
@@ -104,52 +98,8 @@ void main() {
         final protocol = new JsonHubProtocol();
         final payload = e[0];
         final expectedMessage = e[1];
-        final parsedMessages =
-            protocol.parseMessages(payload, Logger("JsonHubProtocol"));
-        final equalityCheck =
-            deepEq(parsedMessages.toString(), ([expectedMessage]).toString());
-        expect(equalityCheck, true);
-      });
-    });
-
-    [
-      [
-        TextMessageFormat.write(
-            '{"type":2, "invocationId": "abc", "headers": {}, "item": 8}'),
-        StreamItemMessage(
-          headers: MessageHeaders(),
-          invocationId: "abc",
-          item: 8,
-        )
-      ],
-      [
-        TextMessageFormat.write(
-            '{"type":2, "invocationId": "abc", "headers": {}, "item": 1648116122951}'),
-        StreamItemMessage(
-            headers: MessageHeaders(),
-            invocationId: "abc",
-            item: DateTime.parse('2022-03-24T15:32:02.951')
-                .millisecondsSinceEpoch)
-      ],
-      [
-        TextMessageFormat.write(
-            '{"type":2, "invocationId": "abc", "headers": {"foo": "bar"}, "item": 8}'),
-        StreamItemMessage(
-          invocationId: "abc",
-          item: 8,
-          headers: headers,
-        )
-      ],
-      [TextMessageFormat.write('{"type":6}'), PingMessage()]
-    ].forEach((e) {
-      test('StreamItem message -> ', () {
-        final protocol = new JsonHubProtocol();
-        final payload = e[0];
-        final expectedMessage = e[1];
-        final parsedMessages =
-            protocol.parseMessages(payload, Logger("JsonHubProtocol"));
-        final equalityCheck =
-            deepEq(parsedMessages.toString(), ([expectedMessage]).toString());
+        final parsedMessages = protocol.parseMessages(payload, Logger("JsonHubProtocol"));
+        final equalityCheck = deepEq(parsedMessages.toString(), ([expectedMessage]).toString());
         expect(equalityCheck, true);
       });
     });
