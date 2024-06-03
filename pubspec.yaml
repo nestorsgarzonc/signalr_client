@@ -11,16 +11,13 @@ dependencies:
     sdk: flutter
   logging: ^1.2.0
   tuple: ^2.0.2
-  web_socket_channel: ^2.4.5
-  sse_channel2: ^0.0.4
+  web_socket_channel: ^3.0.0
   message_pack_dart: ^2.0.1
   http: ^1.2.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  test: ^1.16.2
-
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec
 

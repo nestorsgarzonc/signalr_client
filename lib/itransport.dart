@@ -8,8 +8,6 @@ enum HttpTransportType {
   None, // = 0,
   /// Specifies the WebSockets transport. */
   WebSockets, // = 1,
-  /// Specifies the Server-Sent Events transport. */
-  ServerSentEvents, // = 2,
   /// Specifies the Long Polling transport. */
   LongPolling, // = 4,
 }
@@ -23,8 +21,6 @@ HttpTransportType httpTransportTypeFromString(String? value) {
   switch (value) {
     case "WEBSOCKETS":
       return HttpTransportType.WebSockets;
-    case "SERVERSENTEVENTS":
-      return HttpTransportType.ServerSentEvents;
     case "LONGPOLLING":
       return HttpTransportType.LongPolling;
     default:
